@@ -9,7 +9,7 @@ spring:
     driverClassName: com.mysql.cj.jdbc.Driver
     username: root
     password: root
-
 logging:
-  file: /var/log/jtp-hr-backend/hr-dev.log
+  file:
+    name: /var/log/jtp-hr-backend/hr-dev.log
 

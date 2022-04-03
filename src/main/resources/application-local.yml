@@ -9,3 +9,6 @@ spring:
     driverClassName: com.mysql.cj.jdbc.Driver
     username: root
     password: root
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher

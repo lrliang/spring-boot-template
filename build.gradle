@@ -24,8 +24,9 @@ repositories {
 }
 
 def JUNIT5_API_VERSION = '5.8.2'
-def SPRING_FRAMEWORK_VERSION = '2.6.5'
+def SPRING_FRAMEWORK_VERSION = '2.5.6'
 def JACKSON_VERSION = '2.13.2'
+def SWAGGER_VERSION = '2.9.2'
 
 dependencies {
     //spring dependencies
@@ -38,13 +39,13 @@ dependencies {
 
     //common dependencies
     implementation('mysql:mysql-connector-java:8.0.28')
-    implementation('org.flywaydb:flyway-mysql:8.5.4')
-    implementation('com.google.guava:guava:31.1-jre')
+    implementation('org.flywaydb:flyway-core:5.2.1')
+    implementation('com.google.guava:guava:20.0')
     implementation('commons-io:commons-io:20030203.000550')
     implementation('org.apache.commons:commons-lang3:3.12.0')
     implementation('org.apache.commons:commons-collections4:4.4')
-    implementation('io.springfox:springfox-swagger2:3.0.0')
-    implementation('io.springfox:springfox-swagger-ui:3.0.0')
+    implementation("io.springfox:springfox-swagger2:${SWAGGER_VERSION}")
+    implementation("io.springfox:springfox-swagger-ui:${SWAGGER_VERSION}")
     implementation('com.cwbase:logback-redis-appender:1.1.6')
     implementation('net.javacrumbs.shedlock:shedlock-spring:4.33.0')
     implementation('net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.33.0')
@@ -55,8 +56,8 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${JACKSON_VERSION}")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${JACKSON_VERSION}")
     implementation("com.fasterxml.jackson.core:jackson-core:${JACKSON_VERSION}")
-    implementation("com.fasterxml.jackson.core:jackson-databind:${JACKSON_VERSION}")
     implementation("com.fasterxml.jackson.core:jackson-annotations:${JACKSON_VERSION}")
+    implementation('com.fasterxml.jackson.core:jackson-databind:2.13.2.2')
 
     //test dependencies
     testImplementation("org.springframework.boot:spring-boot-starter-test:${SPRING_FRAMEWORK_VERSION}")
