@@ -15,7 +15,6 @@ public class Order {
     private String creator;
     private BigDecimal totalPrice;
     private OrderStatus status;
-    private Instant createdAt;
 
     private Order() {
     }
@@ -26,7 +25,6 @@ public class Order {
         this.creator = creator;
         this.totalPrice = calculateTotalPrice();
         this.status = CREATED;
-        this.createdAt = now();
     }
 
     public static Order create(OrderId id, List<OrderItem> items, String creator) {
@@ -42,10 +40,6 @@ public class Order {
 
     public OrderId getId() {
         return id;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
     }
 
     public BigDecimal getTotalPrice() {

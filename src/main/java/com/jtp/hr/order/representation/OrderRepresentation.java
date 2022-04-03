@@ -13,7 +13,6 @@ public class OrderRepresentation {
     private final List<OrderItemRepresentation> items;
     private final BigDecimal totalPrice;
     private final OrderStatus status;
-    private final Instant createdAt;
 
     public OrderRepresentation(Order order) {
         List<OrderItemRepresentation> itemRepresentations = order.getItems().stream()
@@ -25,7 +24,6 @@ public class OrderRepresentation {
         this.items = itemRepresentations;
         this.totalPrice = order.getTotalPrice();
         this.status = order.getStatus();
-        this.createdAt = order.getCreatedAt();
 
     }
 

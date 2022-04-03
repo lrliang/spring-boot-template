@@ -25,7 +25,6 @@ class OrderRepositoryComponentTest extends BaseComponentTest {
         Order order = Order.create(orderId(newUuid()), newArrayList(create(newProductId(), 2, valueOf(20))), "theCreator");
         orderRepository.save(order);
         Order saved = orderRepository.byId(order.getId());
-        assertEquals(order.getCreatedAt(), saved.getCreatedAt());
         assertEquals(BigDecimal.valueOf(40), order.getTotalPrice());
         assertEquals(1, order.getItems().size());
     }
