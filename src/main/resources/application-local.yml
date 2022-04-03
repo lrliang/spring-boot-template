@@ -1,0 +1,11 @@
+buildNumber: unknown
+buildTime: unknown
+gitRevision: unknown
+gitBranch: unknown
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:13311/jtp_hr_mysql?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_bin
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root

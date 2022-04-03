@@ -1,0 +1,31 @@
+version: "2"
+services:
+  mysql:
+    restart: always
+    container_name: mysql-for-spring-boot-template
+    image: mysql:8
+    command: [
+      'mysqld',
+      '--innodb-buffer-pool-size=20M',
+      '--character-set-server=utf8mb4',
+      '--collation-server=utf8mb4_unicode_ci',
+      '--default-time-zone=+8:00',
+      '--lower-case-table-names=1'
+    ]
+    networks:
+      - jtp-hr-net
+    environment:
+      - "MYSQL_ROOT_PASSWORD=root"
+      - "MYSQL_DATABASE=jtp_hr_mysql"
+    volumes:
+      - jtp-hr-mysql-data:/var/lib/mysql
+    ports:
+      - "13311:3306"
+
+networks:
+  jtp-hr-net:
+    driver: bridge
+
+volumes:
+  jtp-hr-mysql-data:
+    driver: local

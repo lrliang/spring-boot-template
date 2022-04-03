@@ -1,0 +1,142 @@
+buildscript {
+    repositories {
+        maven { url "https://maven.aliyun.com/repository/central" }
+    }
+    dependencies {
+        classpath "com.avast.gradle:gradle-docker-compose-plugin:0.15.2"
+        classpath "org.owasp:dependency-check-gradle:5.0.0-M2"
+//        classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:1.7.1"
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.7"
+    }
+}
+plugins {
+    id 'java'
+    id "org.springframework.boot" version "2.6.5"
+    id "io.spring.dependency-management" version "1.0.11.RELEASE"
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    maven { url "https://maven.aliyun.com/repository/central" }
+    mavenCentral()
+}
+
+def JUNIT5_API_VERSION = '5.8.2'
+def SPRING_FRAMEWORK_VERSION = '2.6.5'
+def JACKSON_VERSION = '2.13.2'
+
+dependencies {
+    //spring dependencies
+    implementation("org.springframework.boot:spring-boot-starter-web:${SPRING_FRAMEWORK_VERSION}")
+    implementation("org.springframework.boot:spring-boot-starter-actuator:${SPRING_FRAMEWORK_VERSION}")
+    implementation ("org.springframework.boot:spring-boot-starter-data-jpa:${SPRING_FRAMEWORK_VERSION}")
+    implementation("org.springframework.boot:spring-boot-starter-aop:${SPRING_FRAMEWORK_VERSION}")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc:${SPRING_FRAMEWORK_VERSION}")
+    implementation ("org.springframework.boot:spring-boot-starter-validation:${SPRING_FRAMEWORK_VERSION}")
+
+    //common dependencies
+    implementation('mysql:mysql-connector-java:8.0.28')
+    implementation('org.flywaydb:flyway-mysql:8.5.4')
+    implementation('com.google.guava:guava:31.1-jre')
+    implementation('commons-io:commons-io:20030203.000550')
+    implementation('org.apache.commons:commons-lang3:3.12.0')
+    implementation('org.apache.commons:commons-collections4:4.4')
+    implementation('io.springfox:springfox-swagger2:3.0.0')
+    implementation('io.springfox:springfox-swagger-ui:3.0.0')
+    implementation('com.cwbase:logback-redis-appender:1.1.6')
+    implementation('net.javacrumbs.shedlock:shedlock-spring:4.33.0')
+    implementation('net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.33.0')
+
+
+    //jackson dependencies
+    implementation("com.fasterxml.jackson.module:jackson-module-parameter-names:${JACKSON_VERSION}")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${JACKSON_VERSION}")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${JACKSON_VERSION}")
+    implementation("com.fasterxml.jackson.core:jackson-core:${JACKSON_VERSION}")
+    implementation("com.fasterxml.jackson.core:jackson-databind:${JACKSON_VERSION}")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:${JACKSON_VERSION}")
+
+    //test dependencies
+    testImplementation("org.springframework.boot:spring-boot-starter-test:${SPRING_FRAMEWORK_VERSION}")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${JUNIT5_API_VERSION}")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:${JUNIT5_API_VERSION}")
+    testImplementation('io.rest-assured:spring-mock-mvc:4.5.1')
+    testImplementation('org.mockito:mockito-junit-jupiter:4.3.1')
+
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+    implementation("org.mapstruct:mapstruct:1.4.2.Final")
+    implementation("org.mapstruct:mapstruct-jdk8:1.4.2.Final")
+    annotationProcessor ("org.mapstruct:mapstruct-processor:1.4.2.Final")
+    testAnnotationProcessor("org.mapstruct:mapstruct-processor:1.4.2.Final")
+}
+
+sourceSets {
+    componentTest {
+        compileClasspath += sourceSets.main.output + sourceSets.test.output
+        runtimeClasspath += sourceSets.main.output + sourceSets.test.output
+    }
+
+    apiTest {
+        compileClasspath += sourceSets.main.output + sourceSets.test.output
+        runtimeClasspath += sourceSets.main.output + sourceSets.test.output
+    }
+}
+
+
+configurations {
+    componentTestImplementation.extendsFrom testImplementation
+    componentTestRuntimeOnly.extendsFrom testRuntimeOnly
+    apiTestImplementation.extendsFrom testImplementation
+    apiTestRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
+
+task componentTest(type: Test) {
+    description = 'Run component tests.'
+    group = 'verification'
+    testClassesDirs = sourceSets.componentTest.output.classesDirs
+    classpath = sourceSets.componentTest.runtimeClasspath
+    shouldRunAfter test
+}
+
+
+task apiTest(type: Test) {
+    description = 'Run API tests.'
+    group = 'verification'
+    testClassesDirs = sourceSets.apiTest.output.classesDirs
+    classpath = sourceSets.apiTest.runtimeClasspath
+    shouldRunAfter componentTest
+}
+
+configurations.all {
+    exclude group: "junit", module: "junit"
+    exclude group: "org.assertj", module: "assertj-core"
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+}
+
+check.dependsOn componentTest
+check.dependsOn apiTest
+
+bootJar {
+    launchScript()
+}
+
+wrapper {
+    gradleVersion = '7.1'
+}
+
+apply from: "${rootProject.projectDir}/gradle/idea.gradle"
+apply from: "${rootProject.projectDir}/gradle/docker-compose/docker-compose.gradle"
+apply from: "${rootProject.projectDir}/gradle/dependency-check/dependency-check.gradle"
+//apply from: "${rootProject.projectDir}/gradle/spotbugs/spotbugs.gradle"
+apply from: "${rootProject.projectDir}/gradle/checkstyle/checkstyle.gradle"
+apply from: "${rootProject.projectDir}/gradle/git-hooks/git-hooks.gradle"
+apply from: "${rootProject.projectDir}/gradle/version-info.gradle"
+apply from: "${rootProject.projectDir}/gradle/jacoco.gradle"
